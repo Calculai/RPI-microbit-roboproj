@@ -3,30 +3,37 @@ A project where I develop a controllable drone
 
 ## PlatformIO
 
-The current PlatformIO environment targets the BBC micro:bit V2 (`bbcmicrobit_v2`).
-The prototype displays a heart on the micro:bit V2 5x5 LED matrix.
-PlatformIO builds source files from `microbit/` only. Add micro:bit `.cpp` files
-there; Raspberry Pi source files can live in a separate folder such as `rpi/`
-without being included in this firmware build. These micro:bit files are linked
-into one program, so only one file should define `setup()` and `loop()`.
+Both PlatformIO environments target the BBC micro:bit V2 (`bbcmicrobit_v2`):
+
+- `microbit_arduino` is the default Arduino environment. It builds source files
+	from `microbit/`; Raspberry Pi files in `rpi/` are excluded. Only one file in
+	`microbit/` should define `setup()` and `loop()`.
+- `microbit_zephyr_ble` builds the Zephyr BLE firmware. It compiles `.c` and
+	`.cpp` application files from `ble/`; its Zephyr configuration is in `zephyr/`.
 
 On Windows, add `%USERPROFILE%\.platformio\penv\Scripts` to your user `Path`
 environment variable so the `pio` command is available in the terminal. 
 
-Build the firmware from the project directory:
+Build the default Arduino firmware from the project directory:
 
 ```sh
 pio run
 ```
 
+Build the Zephyr BLE firmware instead:
+
+```sh
+pio run -e microbit_zephyr_ble
+```
+
 Connect the micro:bit V2 over USB and upload it with:
 
 ```sh
-pio run --target upload
+pio run -e microbit_arduino --target upload
 ```
 
-The generated firmware is in `.pio/build/microbit_v2/`. The current configuration
-uses the `mbed` upload protocol and the detected `D:` drive; update `upload_port`
-in `platformio.ini` if Windows assigns the micro:bit a different drive letter.
-A micro:bit V1 needs a different target and is not covered by this configuration.
+The Arduino build output is in `.pio/build/microbit_arduino/`. Its upload
+configuration uses the `mbed` protocol and the detected `D:` drive; update
+`upload_port` in `platformio.ini` if Windows assigns a different drive letter.
+A micro:bit V1 needs a different target and is not covered by these environments.
 

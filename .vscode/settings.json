@@ -1,0 +1,4 @@
+{
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/.pio/build/microbit_zephyr_ble/compile_commands.json",
+    "cmake.sourceDirectory": "C:/code/embed/RPI-microbit-roboproj/zephyr"
+}
