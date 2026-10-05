@@ -30,4 +30,5 @@ void loop() {
         delay(2);
         digitalWrite(rowPins[row], LOW);
     }
+    
 }
