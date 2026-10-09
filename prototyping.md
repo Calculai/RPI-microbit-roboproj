@@ -11,8 +11,13 @@ Use platform.io
 
 Add tilt mode to make a wii like controller using the accelerometer
 
+For the joystick controller I need to figure out if I can do it as a gradient or if I need to set 8 different states for directions and have a preset speed each wheel has to be depending on the direction detected. 
+
 Add a AI implementation so the RPI should have a lightweight AI to make decisions moment to moment decision
 and be able to access is a more intense model via my cloudflare tunnel? 
 Focus on implmenting base function before going to more advanced features
 Additionally you can work with it at home so focus on the microbit specific elments while at school
 
+Have three switch cases in the pi for each different mode
+
+maybe button cycle through modes instead of being attached to either button

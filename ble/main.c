@@ -30,6 +30,17 @@ static const struct bt_data scan_response[] = {
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LENGTH),
 };
 
+static struct bt_nus_cb nus_callbacks = {
+    .notif_enabled = notification_changed,
+    .received = data_received,
+};
+
+BT_CONN_CB_DEFINE(connection_callbacks) = {
+    .connected = connected_callback,
+    .disconnected = disconnected_callback,
+    .recycled = recycled_callback,
+};
+
 static void notification_changed(bool enabled, void *context)
 {
     ARG_UNUSED(context);
@@ -53,11 +64,6 @@ static void data_received(struct bt_conn *connection, const void *data,
     }
 }
 
-static struct bt_nus_cb nus_callbacks = {
-    .notif_enabled = notification_changed,
-    .received = data_received,
-};
-
 static void connected_callback(struct bt_conn *connection, uint8_t error)
 {
     ARG_UNUSED(connection);
@@ -78,20 +84,19 @@ static void disconnected_callback(struct bt_conn *connection, uint8_t reason)
 
     connected = false;
     notifications_enabled = false;
-    printk("Pi disconnected; restarting advertising\n");
+    printk("Pi disconnected; waiting for Zephyr to release the connection\n");
+}
 
-    int error = bt_le_adv_start(BT_LE_ADV_CONN, advertising_data,
+static void recycled_callback(void)
+{
+    printk("Connection released; restarting advertising\n");
+    int error = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, advertising_data,
                                 ARRAY_SIZE(advertising_data), scan_response,
                                 ARRAY_SIZE(scan_response));
     if (error != 0 && error != -EALREADY) {
         printk("Restart advertising failed (error %d)\n", error);
     }
 }
-
-BT_CONN_CB_DEFINE(connection_callbacks) = {
-    .connected = connected_callback,
-    .disconnected = disconnected_callback,
-};
 
 static bool read_button(const struct gpio_dt_spec *button, int *value)
 {
@@ -130,7 +135,7 @@ int main(void)
         return error;
     }
 
-    error = bt_le_adv_start(BT_LE_ADV_CONN, advertising_data,
+    error = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, advertising_data,
                             ARRAY_SIZE(advertising_data), scan_response,
                             ARRAY_SIZE(scan_response));
     if (error != 0) {
